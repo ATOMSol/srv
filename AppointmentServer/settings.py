@@ -25,10 +25,10 @@ SECRET_KEY = 'django-insecure-$)5e#5#)_q^k6apijk4x5*ago5hi9_ksez_dy0&l4s)f849p^o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['srv-wj34.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['srv-ddky.onrender.com', '127.0.0.1', 'localhost']
 
 # settings.py
-DOMAIN_NAME = 'https://srv-wj34.onrender.com'  # Replace with your actual domain
+DOMAIN_NAME = 'https://srv-ddky.onrender.com'  # Replace with your actual domain
 
 # Application definition
 
@@ -252,7 +252,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Add CSRF protection
 CSRF_COOKIE_SECURE = True 
 CSRF_TRUSTED_ORIGINS = [
-    'https://srv-wj34.onrender.com',
+    'https://srv-ddky.onrender.com',
     "http://localhost:3000",  # Adjust for your frontend's 
     "http://localhost:8000",  # Adjust for your frontend's 
 
