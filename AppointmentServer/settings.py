@@ -41,15 +41,21 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework','rest_framework.authtoken',
     'appointment',
-    'user',
-    'webshocket',
+    'authuser',
+    'demo',
     'corsheaders',
     'channels',
 
 
 ]
 
-AUTH_USER_MODEL = 'user.User'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+AUTH_USER_MODEL = "authuser.CustomUser"
 
 
 # REST_FRAMEWORK = {
@@ -141,15 +147,20 @@ WSGI_APPLICATION = 'AppointmentServer.wsgi.application'
 # Add Channels configuration
 ASGI_APPLICATION = 'AppointmentServer.asgi.application'
 
-REDIS_URL = 'rediss://red-cuagigtsvqrc73doni7g:D2Qc2hvyjF3yOG49tdWRMT8D4C8yff3P@oregon-redis.render.com:6379'
-# For development (in-memory channel layer)
+# REDIS_URL = 'rediss://red-cuagigtsvqrc73doni7g:D2Qc2hvyjF3yOG49tdWRMT8D4C8yff3P@oregon-redis.render.com:6379'
+# # For development (in-memory channel layer)
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [REDIS_URL],
+#         },
+#     },
+# }
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [REDIS_URL],
-        },
-    },
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 
@@ -185,12 +196,6 @@ LOGGING = {
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation

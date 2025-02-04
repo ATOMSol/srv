@@ -1,0 +1,68 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Index Page</title>
+</head>
+<body>
+    <h1 id="index-page-data"></h1>
+
+    <!-- // index.html -->
+<script>
+    var socket = new WebSocket('ws://localhost:8000/ws/');
+
+        socket.onopen = function(event) {
+            console.log("WebSocket connected!");
+
+            // Send filter parameters
+            socket.send(JSON.stringify({
+                status: "pending",
+                // date: "2024-02-04",  // YYYY-MM-DD format
+                phone: "74810099937",
+                role: "created_by"  // OR "created_by"
+            }));
+        };
+        
+
+    socket.onmessage = function(event) {
+        console.log('Received data:', event.data);
+        document.getElementById('index-page-data').innerHTML = event.data;
+    };
+
+    // socket.onopen = function(event) {
+    //     console.log('WebSocket connection established.');
+    // };
+//     socket.onopen = function(event) {
+//     console.log("WebSocket connected!");
+
+//     // Send filter criteria after connection is established
+//    // Send filter criteria
+    // socket.send(JSON.stringify({
+    //     status: "pending",
+    //     date: "2024-02-04",  // Dynamic date (format: YYYY-MM-DD)
+    //     username: "74810099937",  // Phone number or username
+    //     role: "assigned_to"  // Can be "assigned_to" or "created_by"
+    // }));
+
+// };
+
+    // socket.onmessage = (event) => {
+    //         console.log(event.data);
+    //         const appointments = JSON.parse(event.data);
+    //         console.log(appointments);
+    //         // const appointmentsHTML = appointments.map((appointment) => {
+    //         //     return `<p>${appointment.visitor_name} - ${appointment.date}</p>`;
+    //         // }).join('');
+    //         // document.getElementById('appointments').innerHTML = appointmentsHTML;
+    // };
+
+    socket.onerror = function(event) {
+        console.log('WebSocket error:', event);
+    };
+
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed.');
+    };
+</script>
+</body>
+</html>
