@@ -9,15 +9,15 @@
 
     <!-- // index.html -->
 <script>
-    var socket = new WebSocket('wss://srv-ddky.onrender.com/ws/');
-
+    // var socket = new WebSocket('wss://srv-ddky.onrender.com/ws/');
+    var socket = new WebSocket('ws://localhost:8000/ws/');
         socket.onopen = function(event) {
             console.log("WebSocket connected!");
 
             // Send filter parameters
             socket.send(JSON.stringify({
                 status: "pending",
-                // date: "2024-02-04",  // YYYY-MM-DD format
+                date: "2025-02-04",
                 phone: "74810099937",
                 role: "created_by"  // OR "created_by"
             }));
