@@ -39,8 +39,12 @@ class IndexPageConsumer(AsyncWebsocketConsumer):
         initial_data = await self.get_posts(self.filter_status, self.filter_date, self.user, self.filter_role)
 
         # Send JSON response
-        await self.send(text_data=json.dumps(initial_data))
-
+        # await self.send(text_data=json.dumps(initial_data))
+        # Send JSON response
+        await self.send(text_data=json.dumps({
+            'type': 'initial_data',
+            'data': initial_data,
+        }))
     async def disconnect(self, close_code):
         """Disconnect WebSocket and remove from group."""
         await self.channel_layer.group_discard('index_page', self.channel_name)
@@ -61,8 +65,11 @@ class IndexPageConsumer(AsyncWebsocketConsumer):
             )
         )
 
+        # Send JSON response
         if is_relevant:
-            await self.send(text_data=json.dumps({"updated_appointment": updated_data}))
+            await self.send(text_data=json.dumps({
+                'type': 'updated_data',
+                'data': updated_data}))
 
     @sync_to_async
     def get_posts(self, status, filter_date, user, role):
