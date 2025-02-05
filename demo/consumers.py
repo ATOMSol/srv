@@ -53,7 +53,7 @@ class IndexPageConsumer(AsyncWebsocketConsumer):
 
         # Check if the update is relevant for this client
         is_relevant = (
-            updated_data.get("status") == self.filter_status and
+            # updated_data.get("status") == self.filter_status and
             updated_data.get("date") == self.filter_date and
             (
                 (self.filter_role == "assigned_to" and updated_data.get("assigned_to") == self.filter_phone) or
