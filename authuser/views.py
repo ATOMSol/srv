@@ -70,8 +70,8 @@ from authuser.models import CustomUser
 
 class LoginAPI(viewsets.ViewSet):
     def create(self, request):
-        serializer = LoginSerializer(data=request.data)
         try:
+            serializer = LoginSerializer(data=request.data)
             if serializer.is_valid():
                 phone = serializer.validated_data['phone']
                 password = serializer.validated_data['password']
@@ -97,10 +97,10 @@ class LoginAPI(viewsets.ViewSet):
                     return Response({"ERR": 'Invalid phone and password'})
 
             else:
-                return Response({'ERR':False})
+                return Response({'ERR':"User Not Found"})
 
         except CustomUser.DoesNotExist:
-            return Response({'ERR':False})
+            return Response({'ERR':"Invalid Data"})
 
 class LogoutView(viewsets.ViewSet):
     def create(self,request):
