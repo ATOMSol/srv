@@ -97,10 +97,10 @@ class LoginAPI(viewsets.ViewSet):
                     return Response({"ERR": 'Invalid phone and password'})
 
             else:
-                return Response({'ERR':"User Not Found"})
+                return Response({'ERR':"Invalid Data"})
 
         except CustomUser.DoesNotExist:
-            return Response({'ERR':"Invalid Data"})
+            return Response({'ERR':"Invalid phone and password"})
 
 class LogoutView(viewsets.ViewSet):
     def create(self,request):
