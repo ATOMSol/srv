@@ -59,7 +59,6 @@
         
 
 
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from authuser.serializers.LoginSerializer import LoginSerializer
 from authuser.serializers.UserSerializer import UserSerializer
@@ -81,7 +80,7 @@ class LoginAPI(viewsets.ViewSet):
                 user = CustomUser.objects.get(phone=phone)
                 serial = UserSerializer(user, many=False).data
                 if serial.get('role') != role:
-                    return Response({"error": "Role not matched"})
+                    return Response({"ERR": "Role not matched"})
                 
                 user = authenticate(phone=phone, password=password)
                 if user is not None:
@@ -102,9 +101,6 @@ class LoginAPI(viewsets.ViewSet):
 
         except CustomUser.DoesNotExist:
             return Response({'ERR':False})
-        # except Exception as e:
-        #     return self.error_response('something_went_wrong', 'Something went wrong')
-
 
 class LogoutView(viewsets.ViewSet):
     def create(self,request):
