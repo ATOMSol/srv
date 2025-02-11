@@ -11,28 +11,28 @@
 
 
     <script>
-        var socket = new WebSocket('ws://192.168.125.224:8000/ws/appointment/');
+        var socket = new WebSocket('ws://192.168.64.224:8000/ws/call/85b3f997-2151-43b7-95c8-1aea997ad833/');
 
         socket.onopen = function (event) {
             console.log("✅ WebSocket connected!");
 
-            // Send filter parameters
-            socket.send(JSON.stringify({
-                created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",
-                role: "created_by"
-            }));
+            // // Send filter parameters
+            // socket.send(JSON.stringify({
+            //     created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",
+            //     role: "created_by"
+            // }));
 
             // Start periodic heartbeat to keep connection alive
-            setInterval(() => {
-                if (socket?.readyState === WebSocket.OPEN) {
-                    socket.send(JSON.stringify({
-                        type: "ping",
-                        created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",  // Ensure user ID is sent in ping
-                        role: "created_by"
-                    }));
-                    console.log("🔄 Sent ping with user_id to server.");
-                }
-            }, 30000); // Every 30 seconds
+            // setInterval(() => {
+            //     if (socket?.readyState === WebSocket.OPEN) {
+            //         socket.send(JSON.stringify({
+            //             type: "ping",
+            //             created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",  // Ensure user ID is sent in ping
+            //             role: "created_by"
+            //         }));
+            //         console.log("🔄 Sent ping with user_id to server.");
+            //     }
+            // }, 30000); // Every 30 seconds
 
         };
 
@@ -42,7 +42,7 @@
 
             if (message.type === "ping") {
                 console.log("🔄 Ping received, connection is active.");
-            } else if (message.type === "initial_data") {
+            } else if (message.type === "call_notify") {
                 document.getElementById('index-page-data').innerHTML = JSON.stringify(message.data);
             } else if (message.type === "update_index_page") {
                 document.getElementById('index-page-data').innerHTML = JSON.stringify(message.data);

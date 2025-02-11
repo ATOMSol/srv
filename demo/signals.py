@@ -42,7 +42,7 @@ def call_notify(sender, instance, **kwargs):
     if instance.read == False:
         # Serialize the filtered instance
         serialized_data = CallNotificationSerializer(instance).data
-
+        print(serialized_data)
         async_to_sync(channel_layer.group_send)(
             'call_live',  
             {
