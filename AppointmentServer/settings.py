@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$)5e#5#)_q^k6apijk4x5*ago5hi9_ksez_dy0&l4s)f849p^o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['srv-ddky.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['srv-ddky.onrender.com', '127.0.0.1', 'localhost','192.168.64.224']
 
 # settings.py
 DOMAIN_NAME = 'https://srv-ddky.onrender.com'  # Replace with your actual domain
@@ -248,24 +248,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CSRF_COOKIE_SECURE = not DEBUG  # Secure only in production
+SESSION_COOKIE_SECURE = not DEBUG  # Secure only in production
 
 # Add CSRF protection
-CSRF_COOKIE_SECURE = True 
+# CSRF_COOKIE_SECURE = True 
 CSRF_TRUSTED_ORIGINS = [
     'https://srv-ddky.onrender.com',
-    "http://localhost:3000",  # Adjust for your frontend's 
     "http://localhost:8000",  # Adjust for your frontend's 
-
+    "http://192.168.64.224:8000",
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Adjust for your frontend's 
-    "http://localhost:8081",  # For Android emulator
-    "http://10.0.2.2:8081",  # For Android emulator
-
-
+    "http://localhost:8000",  # Adjust for your frontend's 
+    "http://192.168.64.224:8000"
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 ADMIN_SITE_HEADER = 'Appointment Server Admin'
 ADMIN_SITE_TITLE = 'Appointment Server'

@@ -1,25 +1,75 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Index Page</title>
 </head>
+
 <body>
     <h1 id="index-page-data"></h1>
 
+
+    <script>
+        var socket = new WebSocket('ws://192.168.125.224:8000/ws/appointment/');
+
+        socket.onopen = function (event) {
+            console.log("✅ WebSocket connected!");
+
+            // Send filter parameters
+            socket.send(JSON.stringify({
+                created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",
+                role: "created_by"
+            }));
+
+            // Start periodic heartbeat to keep connection alive
+            setInterval(() => {
+                if (socket?.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: "ping",
+                        created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",  // Ensure user ID is sent in ping
+                        role: "created_by"
+                    }));
+                    console.log("🔄 Sent ping with user_id to server.");
+                }
+            }, 30000); // Every 30 seconds
+
+        };
+
+        socket.onmessage = function (event) {
+            console.log('📩 Received:', event.data);
+            const message = JSON.parse(event.data);
+
+            if (message.type === "ping") {
+                console.log("🔄 Ping received, connection is active.");
+            } else if (message.type === "initial_data") {
+                document.getElementById('index-page-data').innerHTML = JSON.stringify(message.data);
+            } else if (message.type === "update_index_page") {
+                document.getElementById('index-page-data').innerHTML = JSON.stringify(message.data);
+            }
+        };
+
+        socket.onerror = function (event) {
+            console.log('❌ WebSocket error:', event);
+        };
+
+        socket.onclose = function (event) {
+            console.log(`❌ WebSocket closed. Code: ${event.code}, Reason: ${event.reason}`);
+        };
+    </script>
     <!-- // index.html -->
-<script>
-    var socket = new WebSocket('wss://srv-ddky.onrender.com/ws/appointment/');
-    // var socket = new WebSocket('ws://localhost:8000/ws/appointment/');
+    <!-- <script>
+    // var socket = new WebSocket('wss://srv-ddky.onrender.com/ws/appointment/');
+    var socket = new WebSocket('ws://localhost:8000/ws/appointment/');
         socket.onopen = function(event) {
             console.log("WebSocket connected!");
 
             // Send filter parameters
             socket.send(JSON.stringify({
                 status: "pending",
-                date: "2025-02-04",
-                phone: "74810099937",
-                role: "created_by"  // OR "created_by"
+                // date: "2025-02-04",
+                created_by_id: "85b3f997-2151-43b7-95c8-1aea997ad833",
+                role: "assigned_to"  // OR "created_by"
             }));
         };
         
@@ -29,32 +79,6 @@
         document.getElementById('index-page-data').innerHTML = event.data;
     };
 
-    // socket.onopen = function(event) {
-    //     console.log('WebSocket connection established.');
-    // };
-//     socket.onopen = function(event) {
-//     console.log("WebSocket connected!");
-
-//     // Send filter criteria after connection is established
-//    // Send filter criteria
-    // socket.send(JSON.stringify({
-    //     status: "pending",
-    //     date: "2024-02-04",  // Dynamic date (format: YYYY-MM-DD)
-    //     username: "74810099937",  // Phone number or username
-    //     role: "assigned_to"  // Can be "assigned_to" or "created_by"
-    // }));
-
-// };
-
-    // socket.onmessage = (event) => {
-    //         console.log(event.data);
-    //         const appointments = JSON.parse(event.data);
-    //         console.log(appointments);
-    //         // const appointmentsHTML = appointments.map((appointment) => {
-    //         //     return `<p>${appointment.visitor_name} - ${appointment.date}</p>`;
-    //         // }).join('');
-    //         // document.getElementById('appointments').innerHTML = appointmentsHTML;
-    // };
 
     socket.onerror = function(event) {
         console.log('WebSocket error:', event);
@@ -63,6 +87,7 @@
     socket.onclose = function(event) {
         console.log('WebSocket connection closed.');
     };
-</script>
+</script> -->
 </body>
+
 </html>

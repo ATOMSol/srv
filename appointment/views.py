@@ -39,7 +39,7 @@ class AppointmentListView(BaseAuthentication):
         
         # Start with the base queryset
         queryset = Appointment.objects.all()
-        
+        print(queryset)
         # Loop through query parameters and apply filters
         for field, value in query_params.items():
             if hasattr(Appointment, field):  # Check if the field exists in the model
@@ -47,7 +47,7 @@ class AppointmentListView(BaseAuthentication):
         
         # Serialize the filtered queryset
         serializer = AppointmentSerializer(queryset, many=True)
-        
+        print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # http://127.0.0.1:8000/api/appointments/update-appointments/

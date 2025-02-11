@@ -19,7 +19,7 @@ class CustomUserAdmin(UserAdmin):
     )
     
     # List display settings
-    list_display = ('phone', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined')
+    list_display = ('phone','unique_id', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined')
     
     # Search fields
     search_fields = ('phone', 'first_name', 'last_name', 'email')
