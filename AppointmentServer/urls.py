@@ -25,15 +25,16 @@
 from django.contrib import admin
 from django.urls import include, path
 
-from authuser.views import index
+# from authuser.views import index
 from demo.views import index1
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('realtime',index1, name='index1'),
-    path('',index, name='index'),
+    # path('',index, name='index'),
     path('api/', include('authuser.urls')),
     path('api/', include('appointment.urls')),
     # path('realtime', include('demo.urls')),
     path('api/', include('demo.urls')),
+    path('', include('main_server.urls')),
 ]

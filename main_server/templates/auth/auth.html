@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Your Brand</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #1e293b;
+            --success-color: #22c55e;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .brand-section {
+            background: linear-gradient(135deg, var(--primary-color), #818cf8);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .brand-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="%23FFFFFF20" d="M 0,100 C 0,30 30,0 100,0 S 200,30 200,100 170,200 100,200 0,170 0,100"/></svg>');
+            background-size: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .auth-card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 480px;
+            transition: transform var(--transition-speed);
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .form-control {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            transition: all var(--transition-speed);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: var(--text-secondary);
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+        }
+
+        .form-floating > label {
+            color: var(--text-secondary);
+        }
+
+        .auth-switch {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .auth-switch a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .input-group-text {
+            background-color: transparent;
+            border-color: #e2e8f0;
+        }
+
+        .success-message {
+            color: var(--success-color);
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .brand-section {
+                min-height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sign Up Page -->
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <div class="col-lg-6 brand-section">
+            <div class="brand-content text-center">
+                <h1 class="display-4 fw-bold mb-4">Welcome to Our Platform</h1>
+                <p class="lead mb-4">Transform your business with our powerful solutions. Join thousands of satisfied customers today.</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <span class="badge bg-white text-primary p-2">Enterprise Ready</span>
+                    <span class="badge bg-white text-primary p-2">24/7 Support</span>
+                    <span class="badge bg-white text-primary p-2">99.9% Uptime</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 d-flex align-items-center justify-content-center min-vh-100 p-4">
+            <div class="auth-card" id="signupForm">
+                <h2 class="text-center mb-4">Create Account</h2>
+                <form onsubmit="return handleSignup(event)">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="fullName" name="full_name" placeholder="Full Name" required>
+                        <label for="fullName">Full Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="companyName" name="company_name" placeholder="Company Name" required>
+                        <label for="companyName">Company Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Address" required>
+                        <label for="address">Address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="tel" class="form-control" id="phoneNumber" name="phone_number" placeholder="Phone Number" required>
+                        <label for="phoneNumber">Phone Number</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password">Password</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                </form>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" onclick="toggleForms()">Sign In</a>
+                </div>
+            </div>
+
+            <!-- Sign In Form -->
+            <div class="auth-card" id="signinForm" style="display: none;">
+                <h2 class="text-center mb-4">Welcome Back</h2>
+                <form onsubmit="return handleSignin(event)">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="loginIdentifier" name="identifier" placeholder="Email or Phone Number" required>
+                        <label for="loginIdentifier">Email or Phone Number</label>
+                    </div>
+                    <div class="form-floating mb-4">
+                        <input type="password" class="form-control" id="loginPassword" name="password" placeholder="Password" required>
+                        <label for="loginPassword">Password</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                </form>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" onclick="toggleForms()">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleForms() {
+    const signupForm = document.getElementById('signupForm');
+    const signinForm = document.getElementById('signinForm');
+    
+    if (signupForm.style.display !== 'none') {
+        signupForm.style.display = 'none';
+        signinForm.style.display = 'block';
+    } else {
+        signupForm.style.display = 'block';
+        signinForm.style.display = 'none';
+    }
+}
+
+function handleSignup(event) {
+    event.preventDefault();
+    
+    const formData = {
+        full_name: document.getElementById('fullName').value,
+        company_name: document.getElementById('companyName').value,
+        address: document.getElementById('address').value,
+        email: document.getElementById('email').value,
+        phone_number: document.getElementById('phoneNumber').value,
+        password: document.getElementById('password').value
+    };
+
+    // Here you would typically send the data to your backend
+    console.log('Signup data:', formData);
+    
+    // Show success message or handle errors
+    return false;
+}
+
+function handleSignin(event) {
+    event.preventDefault();
+    
+    const identifier = document.getElementById('loginIdentifier').value;
+    const password = document.getElementById('loginPassword').value;
+    const rememberMe = document.getElementById('rememberMe').checked;
+
+    const formData = {
+        identifier: identifier, // This could be either email or phone
+        password: password,
+        remember_me: rememberMe
+    };
+
+    // Here you would typically send the data to your backend
+    console.log('Signin data:', formData);
+    
+    // Handle authentication
+    return false;
+}
+</script>
+</body>
+</html>

@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'demo',
     'corsheaders',
     'channels',
-
+    'main_server',
 
 ]
 
