@@ -45,7 +45,7 @@ class Role(models.Model):
 # Custom User Model
 class CustomUser(AbstractUser):
     unique_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    pass_key = models.CharField(max_length=500, unique=True)
+    pass_key = models.CharField(max_length=500, unique=True,blank=True,null=True)
     phone = models.CharField(max_length=15, unique=True, verbose_name=_("Phone Number"))
     
     roles = models.ManyToManyField(Role, related_name="users")

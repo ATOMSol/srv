@@ -11,24 +11,33 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+from dotenv import load_dotenv
+
+load_dotenv()
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+db_host = os.getenv('DB_HOST')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$)5e#5#)_q^k6apijk4x5*ago5hi9_ksez_dy0&l4s)f849p^o'
-
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = ['srv-ddky.onrender.com', '127.0.0.1', 'localhost','192.168.64.224']
+ALLOWED_HOSTS = [
+    "srv-ddky.onrender.com",
+    "127.0.0.1",
+    "localhost",
+    "192.168.54.224",
+]
 
 # settings.py
-DOMAIN_NAME = 'https://srv-ddky.onrender.com'  # Replace with your actual domain
+DOMAIN_NAME = 'http://192.168.54.224:8000'  # Replace with your actual domain
 
 # Application definition
 
@@ -49,66 +58,29 @@ INSTALLED_APPS = [
 
 ]
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': dj_database_url.config(default=os.getenv("DATABASE_URL", "postgresql://user:pass@db:5432/dbname"))
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://localhost:6379/0"),
     }
 }
+
+
 AUTH_USER_MODEL = "authuser.CustomUser"
 
-
-# REST_FRAMEWORK = {
-
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-    
-#         'rest_framework_simplejwt.authentication.JWTAuthentication',
-#     )
-
-# }
-
-# from datetime import timedelta
-
-
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-#     "ROTATE_REFRESH_TOKENS": False,
-#     "BLACKLIST_AFTER_ROTATION": False,
-#     "UPDATE_LAST_LOGIN": False,
-
-#     "ALGORITHM": "HS256",
-#     "SIGNING_KEY": SECRET_KEY,
-#     "VERIFYING_KEY": "",
-#     "AUDIENCE": None,
-#     "ISSUER": None,
-#     # "JSON_ENCODER": None,
-#     # "JWK_URL": None,
-#     # "LEEWAY": 0,
-
-#     "AUTH_HEADER_TYPES": ("Bearer",),
-#     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
-#     "USER_ID_FIELD": "id",
-#     "USER_ID_CLAIM": "user_id",
-#     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
-#     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
-#     "TOKEN_TYPE_CLAIM": "token_type",
-#     # "TOKEN_USER_CLASS": "rest_framework_simplejwt.models.TokenUser",
-
-#     "JTI_CLAIM": "jti",
-
-#     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-#     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-#     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-
-#     # "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-#     # "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
-#     # "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
-#     # "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
-#     # "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
-#     # "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
-# }
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -147,22 +119,21 @@ WSGI_APPLICATION = 'AppointmentServer.wsgi.application'
 # Add Channels configuration
 ASGI_APPLICATION = 'AppointmentServer.asgi.application'
 
-# REDIS_URL = 'rediss://red-cuagigtsvqrc73doni7g:D2Qc2hvyjF3yOG49tdWRMT8D4C8yff3P@oregon-redis.render.com:6379'
-# # For development (in-memory channel layer)
+
 # CHANNEL_LAYERS = {
 #     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [REDIS_URL],
-#         },
-#     },
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
 # }
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [os.getenv("REDIS_URL", "redis://redis:6379/0")],
+        },
+    },
 }
-
 
 
 REST_FRAMEWORK = {
@@ -248,21 +219,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_COOKIE_SECURE = not DEBUG  # Secure only in production
-SESSION_COOKIE_SECURE = not DEBUG  # Secure only in production
+CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = False
 
 # Add CSRF protection
 # CSRF_COOKIE_SECURE = True 
 CSRF_TRUSTED_ORIGINS = [
-    'https://srv-ddky.onrender.com',
-    "http://localhost:8000",  # Adjust for your frontend's 
-    "http://192.168.64.224:8000",
+    "http://192.168.54.224:8000",
 ]
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Adjust for your frontend's 
-    "http://192.168.64.224:8000"
+    "http://192.168.54.224:8000"
 ]
 CORS_ALLOW_CREDENTIALS = True
 

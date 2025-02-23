@@ -36,5 +36,5 @@ urlpatterns = [
     path('api/', include('appointment.urls')),
     # path('realtime', include('demo.urls')),
     path('api/', include('demo.urls')),
-    path('', include('main_server.urls')),
+    path('', include('main_server.urls',namespace="main_server")),
 ]

@@ -13,6 +13,7 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('phone', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'pass_key')}),
+        (("Group"), {"fields": ("groups","user_permissions")}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'roles')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Team info'), {'fields': ('gm',)}),
@@ -39,3 +40,42 @@ class CustomUserAdmin(UserAdmin):
 
 # Register the CustomUser model with the custom admin
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class UserInline(admin.TabularInline):
+    model = User.groups.through  # This is the intermediate model for the ManyToManyField
+    extra = 0
+    verbose_name = "User"
+    verbose_name_plural = "Users"
+
+class GroupAdmin(BaseGroupAdmin):
+    inlines = [UserInline]
+
+# Unregister the default Group admin and register your customized one
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdmin)
