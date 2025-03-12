@@ -11,7 +11,9 @@
 
 
     <script>
-        var socket = new WebSocket('ws://192.168.64.224:8000/ws/call/85b3f997-2151-43b7-95c8-1aea997ad833/');
+        var socket = new WebSocket('ws://127.0.0.1:4003/ws/gm_visitors/?gm_user_id=23c17169-599e-4792-874f-ea03637e7af0');
+        // var socket = new WebSocket('ws://192.168.54.224:4002/ws/call/a465b8f0-175f-4323-b160-4b1e182da268/');
+        // var socket = new WebSocket('ws://192.168.200.224:4002/ws/gm_visitors/?user_id=ee3060f0-9d60-41b3-a83b-b9b967b493bf/');
 
         socket.onopen = function (event) {
             console.log("✅ WebSocket connected!");

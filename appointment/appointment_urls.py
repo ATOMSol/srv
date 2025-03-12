@@ -1,6 +1,6 @@
 
 from django.urls import path,include
-from appointment.views import AppointmentCreateView,AppointmentListView,AppointmentUpdateView,DeleteAppointmentView
+from appointment.views import AppointmentCreateView,AppointmentListView,AppointmentUpdateView,DeleteAppointmentView,CallVisitorView
 from rest_framework.routers import SimpleRouter
 
 appointment = SimpleRouter()
@@ -8,6 +8,7 @@ appointment.register(r'create-appointments', AppointmentCreateView, basename='cr
 appointment.register(r'get-appointments', AppointmentListView, basename='get-appointments')
 appointment.register(r'update-appointments', AppointmentUpdateView, basename='update-appointments')
 appointment.register(r'delete-appointments', DeleteAppointmentView, basename='delete-appointments')
+appointment.register(r'call-action', CallVisitorView, basename='call-action-visitor')
 
 # urlpatterns = [
 #     path('create-appointments/',AppointmentCreateView, name='create-appointment'),

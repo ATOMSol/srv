@@ -352,10 +352,11 @@
 
             try {
                 // API URL (Replace with your actual API endpoint)
-                const response = await fetch(`http://127.0.0.1:8000/api/connect_passkeys/?passkey=${encodeURIComponent(passkeyInput)}`, {
+                const response = await fetch(`http://192.168.200.224:4000/api/connect_passkeys/?passkey=${encodeURIComponent(passkeyInput)}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" }
                 });
+                console.log(passkeyInput);
                 let data = await response.json();
                 // console.log(data);
 
@@ -399,7 +400,7 @@
         }
     
         try {
-            const otpResponse = await fetch(`http://127.0.0.1:8000/api/connect_passkeys/`, {
+            const otpResponse = await fetch(`http://192.168.54.224:4000/api/connect_passkeys/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ passkey:passkey, unique_phone: connectionId, otp: otpInput })
@@ -562,97 +563,11 @@
                 $(this).val(pastedText);
             });
 
-            // // Handle passkey form submission via AJAX
-            // $("#passkeyForm").submit(function (event) {
-            //     event.preventDefault();
-            //     let userId = $("#userId").val();
-            //     let passKey = $("#passkeyInput").val();
-
-            //     $.ajax({
-            //         url: 'https://www.google.com/',
-            //         type: 'POST',
-            //         contentType: "application/json",
-            //         data: JSON.stringify({ user_id: userId, pass_key: passKey }),
-            //         success: function (response) {
-            //             if (response.success) {
-            //                 $(`button[data-userid="${userId}"]`).replaceWith(`<span class="pass-key">${passKey}</span>`);
-            //                 $("#passkeyModal").modal("hide");
-            //             } else {
-            //                 $("#errorMsg").show();
-            //             }
-            //         },
-            //         error: function () {
-            //             $("#errorMsg").show();
-            //         }
-            //     });
-            // });
+           
         });
 
     </script>
 
-
-    <!-- <script>
-        $(document).ready(function () {
-            $('#userTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "lengthMenu": [5, 10, 25, 50],
-                dom: 'Bfrtip',
-                buttons: [
-                    { extend: 'copy', className: 'btn btn-copy', text: '<i class="fas fa-copy"></i> Copy' },
-                    { extend: 'csv', className: 'btn btn-csv', text: '<i class="fas fa-file-csv"></i> CSV' },
-                    { extend: 'excel', className: 'btn btn-excel', text: '<i class="fas fa-file-excel"></i> Excel' },
-                    { extend: 'pdf', className: 'btn btn-pdf', text: '<i class="fas fa-file-pdf"></i> PDF' },
-                    { extend: 'print', className: 'btn btn-print', text: '<i class="fas fa-print"></i> Print' }
-                ]
-            });
-
-            $(".add-passkey-btn").click(function () {
-                let userId = $(this).data("userid");
-                $("#userId").val(userId);
-                $("#passkeyInput").val("");
-                $("#errorMsg").hide();
-                $("#passkeyModal").modal("show");
-            });
-
-            $("#passkeyInput").on("keydown", function (e) {
-                e.preventDefault();
-            });
-
-            $("#passkeyInput").on("paste", function (e) {
-                e.preventDefault();
-                var clipboardData = e.originalEvent.clipboardData || window.clipboardData;
-                var pastedText = clipboardData.getData("text");
-                $(this).val(pastedText);
-            });
-
-            $("#passkeyForm").submit(function (event) {
-                event.preventDefault();
-                let userId = $("#userId").val();
-                let passKey = $("#passkeyInput").val();
-
-                $.ajax({
-                    url: '/api/save-passkey/',
-                    type: 'POST',
-                    contentType: "application/json",
-                    data: JSON.stringify({ user_id: userId, pass_key: passKey }),
-                    success: function (response) {
-                        if (response.success) {
-                            $(`button[data-userid="${userId}"]`).replaceWith(`<span class="pass-key">${passKey}</span>`);
-                            $("#passkeyModal").modal("hide");
-                        } else {
-                            $("#errorMsg").show();
-                        }
-                    },
-                    error: function () {
-                        $("#errorMsg").show();
-                    }
-                });
-            });
-        });
-    </script> -->
 </div>
 
 

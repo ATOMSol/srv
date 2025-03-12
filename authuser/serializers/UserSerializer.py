@@ -14,6 +14,10 @@ class UserSerializer(serializers.ModelSerializer):
         return role.name
     
 
+    # def get_role(self, obj):
+    #     if obj.roles.exists():
+    #         return obj.roles.first().id
+    #     return None
 
 # class UpdateProfileSerializer(serializers.ModelSerializer):
 #     username = serializers.IntegerField(read_only=True)  # Mark username as read-only

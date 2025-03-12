@@ -27,6 +27,7 @@ class LoginAPI(viewsets.ViewSet):
                         Token.objects.get(user=user).delete()
                     token = Token.objects.create(user=user)
 
+
                     return Response({
                         'user': UserSerializer(user, many=False).data,
                         'Token': token.key,
@@ -38,7 +39,8 @@ class LoginAPI(viewsets.ViewSet):
             else:
                 return Response({'ERR':"Invalid Data"})
 
-        except CustomUser.DoesNotExist:
+        except Exception as e:
+            print(e)
             return Response({'ERR':"Invalid phone and password"})
 
 class LogoutView(viewsets.ViewSet):

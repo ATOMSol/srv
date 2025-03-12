@@ -28,6 +28,8 @@ class CallLiveConsumer(AsyncWebsocketConsumer):
         # Convert UUID objects to strings (Avoid JSON errors)
         data['sender'] = str(data['sender'])
         data['receiver'] = str(data['receiver'])
+        print(data['receiver'])
+        print("k",self.receive_id)
         if data['receiver']!=self.receive_id:
             return
 

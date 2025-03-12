@@ -18,6 +18,17 @@ def index1(request):
 
 # API View for creating a notification
 class CallGenerate(BaseAuthentication):
+    def list(self, request):
+        unread_calls = CallNotification.objects.filter(receiver=request.user, read=False)
+        serializer = CallNotificationSerializer(unread_calls, many=True)
+        return Response({
+            "RES": serializer.data,
+            "count": unread_calls.count(),
+            "message": "Fetched successfully." if unread_calls.exists() else "No unread calls."
+        })
+
+    
+
     def create(self,request):
         receiver_id = request.data.get('receiver')
         
@@ -109,19 +120,19 @@ class OrderHistoryAPIView(viewsets.ViewSet):
 
 class CheckUserViewSet(viewsets.ViewSet):
     def list(self, request):
-        phone = request.GET.get("phone")  # Get phone from query params
-        if not phone:
-            return Response({"ERR": "Phone number is required"}, status=400)
+        screen_id = request.GET.get("screen_id")  # Get screen_id from query params
+        if not screen_id:
+            return Response({"ERR": "screen_id number is required"}, status=400)
 
         try:
-            user = CustomUser.objects.get(phone=phone)
-            screen_data = ScreenActivity.objects.filter(screen_id=user).values()  # Fetch all related screens
+            screen_data = ScreenActivity.objects.filter(screen_id=screen_id).values()  # Fetch all related screens
 
             return Response({
-                "RES": list(screen_data),  # Convert queryset to list
+                "RES": True,  # Convert queryset to list
                 "user": {
-                    "phone": user.phone,
-                    "name": user.first_name
+                    "id":screen_data.live_user,
+                    "phone": screen_data.live_user.email,
+                    "name": screen_data.live_user.email
                 }
             })
         except CustomUser.DoesNotExist:
@@ -141,3 +152,32 @@ class UpdateOrderStatus(viewsets.ViewSet):
             return Response({"success": True, "message": "Order status updated!"}, status=status.HTTP_200_OK)
         except Order.DoesNotExist:
             return Response({"success": False, "error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class ActiveDisplay(BaseAuthentication):
+    def create(self, request):
+        try:
+            ob = ScreenActivity.objects.get(screen_id=request.data.get("screen_id"))  # ✅ screen_id
+            ob.is_active = True
+            ob.live_user = request.user
+            ob.updated_at = request.user
+            ob.save()
+            return Response({"RES": True, "display_id": ob.id})  # ✅ Return RES and display_id
+        except Exception as e:
+            print(e)
+            return Response({"ERR": False})
+
+
+class DeActiveDisplay(BaseAuthentication):
+    def create(self, request):
+        print(request.data)
+        try:
+            ob = ScreenActivity.objects.get(id=request.data.get("id"))  # ✅ id
+            ob.is_active = False
+            ob.live_user = None
+            ob.updated_at = request.user
+            ob.save()
+            return Response({"RES": True})  # ✅ Return RES
+        except Exception as e:
+            print(e)
+            return Response({"ERR": False})

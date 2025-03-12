@@ -1,29 +1,42 @@
 from rest_framework import serializers
 from .models import Appointment, AdditionalVisitor
+from urllib.parse import urljoin
+from django.conf import settings
+
 
 class AdditionalVisitorSerializer(serializers.ModelSerializer):
+    img = serializers.SerializerMethodField()  # ✅ Convert to full URL
+    # img = serializers.ImageField(required=False, allow_null=True)  # ✅ Fix: Allows None
     class Meta:
         model = AdditionalVisitor
-        fields = ['name', 'img']
+        exclude = ['id','participants']
+
+    def get_img(self, obj):
+        if obj.img:
+            return urljoin(settings.DOMAIN_NAME, obj.img.url)
+        return None
+
+
 
 class AppointmentSerializer(serializers.ModelSerializer):
-    additional_visitors = AdditionalVisitorSerializer(many=True, required=False)  # Nested serializer
+    assigned_to = serializers.SerializerMethodField()  # ✅ Custom field for name
+    visitor_img = serializers.SerializerMethodField()  # ✅ Convert to full URL
+    additional_visitors = AdditionalVisitorSerializer(many=True, read_only=True)
+    # visitor_img = serializers.ImageField(required=False, allow_null=True)  # ✅ Fix: Allows file upload
 
     class Meta:
         model = Appointment
-        fields = [
-            'id', 'visitor_name', 'email', 'phone', 'date', 'description',
-            'status', 'assigned_to', 'company_name', 'company_address',
-            'purpose_of_visit', 'visitor_img', 'created_by', 'updated_by',
-            'additional_visitors'
-        ]
+        fields = "__all__"
 
-    def create(self, validated_data):
-        additional_visitors_data = validated_data.pop('additional_visitors', [])
-        appointment = Appointment.objects.create(**validated_data)
-
-        # Save Additional Visitors
-        for visitor_data in additional_visitors_data:
-            AdditionalVisitor.objects.create(participants=appointment, **visitor_data)
-
-        return appointment
+    def get_visitor_img(self, obj):
+        """Convert visitor_img to full URL"""
+        if obj.visitor_img:
+            return urljoin(settings.DOMAIN_NAME, obj.visitor_img.url)
+        return None
+    
+    def get_assigned_to(self, obj):
+        """Return assigned user's full name or username"""
+        if obj.assigned_to:
+            full_name = f"{obj.assigned_to.first_name} {obj.assigned_to.last_name}".strip()
+            return full_name if full_name else obj.assigned_to.phone  # Fallback to username
+        return None

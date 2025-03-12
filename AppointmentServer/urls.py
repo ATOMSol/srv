@@ -24,6 +24,8 @@
 # src/urls.py
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 # from authuser.views import index
 from demo.views import index1
@@ -38,3 +40,7 @@ urlpatterns = [
     path('api/', include('demo.urls')),
     path('', include('main_server.urls',namespace="main_server")),
 ]
+
+# Serve media files in development mode
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

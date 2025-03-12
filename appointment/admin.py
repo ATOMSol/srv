@@ -13,4 +13,4 @@ class AdditionalVisitorInline(admin.TabularInline):  # Use StackedInline for a v
 @admin.register(Appointment)
 class VisitorsAdmin(admin.ModelAdmin):
     inlines = [AdditionalVisitorInline]
-    list_display = ('visitor_name',"id")
+    list_display = ('visitor_name',"date")

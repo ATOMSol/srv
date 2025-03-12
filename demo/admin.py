@@ -41,15 +41,11 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(ScreenActivity)
 class ScreenActivityAdmin(admin.ModelAdmin):
-    list_display = ('screen_id', 'is_active', 'created_at', 'updated_at')
+    list_display = ('screen_id','live_user', 'is_active','password', 'created_at', 'updated_at')
     list_filter = ('is_active', 'created_at', 'updated_at')
     search_fields = ('screen_id',)
     fieldsets = (
-        (None, {'fields': ('screen_id', 'is_active')}),
+        (None, {'fields': ('screen_id','live_user', 'is_active')}),
     )
     readonly_fields = ('created_at', 'updated_at')
 
-# admin.site.register(ScreenActivity, ScreenActivityAdmin)
-#     )
-
-# admin.site.register(ScreenActivity, ScreenActivityAdmin)

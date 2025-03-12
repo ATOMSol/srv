@@ -29,15 +29,18 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = [
-    "srv-ddky.onrender.com",
-    "127.0.0.1",
-    "localhost",
-    "192.168.54.224",
-]
+# ALLOWED_HOSTS = [
+#     "srv-ddky.onrender.com",
+#     "127.0.0.1",
+#     "localhost",
+#     "192.168.54.224",
+# ]
 
+ALLOWED_HOSTS = ['8391-2401-4900-7072-e7a5-9440-b97f-b5a-2f1c.ngrok-free.app', 'localhost', '127.0.0.1']
 # settings.py
-DOMAIN_NAME = 'http://192.168.54.224:8000'  # Replace with your actual domain
+DOMAIN_NAME = 'http://192.168.215.224:4003'  # Replace with your actual domain
+
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4003")  # Change this to your actual host
 
 # Application definition
 
@@ -58,17 +61,17 @@ INSTALLED_APPS = [
 
 ]
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv("DATABASE_URL", "postgresql://user:pass@db:5432/dbname"))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+
+# DATABASES = {
+#     'default': dj_database_url.config(default=os.getenv("DATABASE_URL", "postgresql://user:pass@db:5432/dbname"))
+# }
 
 
 CACHES = {
@@ -83,6 +86,7 @@ AUTH_USER_MODEL = "authuser.CustomUser"
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -130,10 +134,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.getenv("REDIS_URL", "redis://redis:6379/0")],
+            "hosts": [os.getenv("REDIS_URL", "redis://home_redis:6379/0")],
         },
     },
 }
+
 
 
 REST_FRAMEWORK = {
@@ -219,19 +224,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 
 # Add CSRF protection
 # CSRF_COOKIE_SECURE = True 
-CSRF_TRUSTED_ORIGINS = [
-    "http://192.168.54.224:8000",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     '*',
+# ]
+
+# CORS_ALLOWED_ORIGINS = [
+#     '*',
+# ]
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://192.168.54.224:8000"
-]
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_CREDENTIALS = True
 
 ADMIN_SITE_HEADER = 'Appointment Server Admin'
@@ -240,3 +249,14 @@ ADMIN_SITE_TITLE = 'Appointment Server'
 # Add these settings to handle media files
 MEDIA_URL = '/media/'  # URL to access the uploaded files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  
+
+
+
+# Email Section................
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+

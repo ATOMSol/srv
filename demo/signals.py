@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from appointment.models import Appointment
-from appointment.AppointmentSerializer import AppointmentSerializer
+from .serializers.live_appoint_serializers import AppointmentSerializer
 from demo.models import CallNotification,Order
 from demo.serializers.call_serializers import CallNotificationSerializer
 from demo.serializers.canteen_serializers import GetOrderSerializer
@@ -16,7 +16,9 @@ def update_index_page(sender, instance, **kwargs):
     channel_layer = get_channel_layer()
 
     # Serialize the updated appointment
-    serialized_data = AppointmentSerializer(instance).data
+    serializer = AppointmentSerializer(instance)
+    serialized_data = serialize_data(serializer.data)  # Convert UUIDs to string
+
     # Send the updated appointment data to the WebSocket group
     async_to_sync(channel_layer.group_send)(
     'index_page',  
@@ -70,3 +72,36 @@ def order_notify(sender, instance, **kwargs):
                 'data': serialized_data  # Sending only filtered data
             }
         )
+
+
+
+
+# gm visitor list live......................
+@receiver(post_save, sender=Appointment)
+def send_appointment_update(sender, instance, **kwargs):
+    """Send update only when an appointment is modified"""
+    channel_layer = get_channel_layer()
+    serializer = AppointmentSerializer(instance)
+
+    serialized_data = serialize_data(serializer.data)  # Convert UUIDs to string
+
+    async_to_sync(channel_layer.group_send)(
+        "appointments_updates",
+        {
+            "type": "send_appointment_update",
+            "data": serialized_data,  # Now using properly serialized data
+        },
+    )
+
+
+import uuid
+
+def serialize_data(data):
+    """Recursively convert non-serializable data types to JSON-friendly formats."""
+    if isinstance(data, dict):
+        return {k: serialize_data(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [serialize_data(v) for v in data]
+    elif isinstance(data, uuid.UUID):  # Convert UUIDs to strings
+        return str(data)
+    return data

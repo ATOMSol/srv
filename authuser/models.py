@@ -72,3 +72,6 @@ class CustomUser(AbstractUser):
     def get_roles(self):
         """Return a list of role names"""
         return list(self.roles.values_list('name', flat=True))
+
+    def __str__(self):
+        return str(self.unique_id)  # Convert UUID to string for readability

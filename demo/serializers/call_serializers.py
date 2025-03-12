@@ -21,13 +21,40 @@ class ContactListSerializer(serializers.ModelSerializer):
 
 
 
+# class CallNotificationSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CallNotification
+#         fields = ['call_id', 'timestamp', 'read', 'sender', 'receiver']
+
+#     def to_representation(self, instance):
+#         data = super().to_representation(instance)
+#         data['sender'] = str(instance.sender)  # Convert UUID to string
+#         data['receiver'] = str(instance.receiver)
+#         return data
+
+# class CallNotificationSerializer(serializers.ModelSerializer):
+#     sender = serializers.StringRelatedField()
+#     # receiver = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = CallNotification
+#         fields = ['call_id', 'timestamp', 'read', 'sender', 'receiver']
+
+#     def get_sender(self, obj):
+#         return str(obj.sender)
+
+
 class CallNotificationSerializer(serializers.ModelSerializer):
-    sender = serializers.StringRelatedField()
-    # receiver = serializers.SerializerMethodField()
+    sender = serializers.SerializerMethodField()
+    receiver = serializers.SerializerMethodField()
+    call_id = serializers.UUIDField(format='hex')  # Ensures UUID is serialized as a string
 
     class Meta:
         model = CallNotification
         fields = ['call_id', 'timestamp', 'read', 'sender', 'receiver']
 
     def get_sender(self, obj):
-        return obj.sender
+        return obj.sender.phone  # Use sender's phone number instead of UUID
+
+    def get_receiver(self, obj):
+        return str(obj.receiver)  # Use receiver's phone number

@@ -9,6 +9,7 @@ STATUS_CHOICES = (
         ('in_progress', 'In Progress'),
         ('completed','Completed'),
         ('next','Next'),
+        ('call','Call'),
 )
 class Appointment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -50,7 +51,7 @@ class AdditionalVisitor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     # email = models.EmailField()
-    participants = models.ForeignKey(Appointment,on_delete=models.CASCADE, related_name="additional_visitor",default=None)  # Multiple participants
+    participants = models.ForeignKey(Appointment,on_delete=models.CASCADE, related_name="additional_visitors",default=None)  # Multiple participants
     img = models.ImageField(upload_to='additional_visitor_image/', blank=True)  # 'product_images/' is the folder where the image will be saved
 
     def __str__(self):
