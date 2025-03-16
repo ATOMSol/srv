@@ -45,7 +45,7 @@ class ScreenActivityAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created_at', 'updated_at')
     search_fields = ('screen_id',)
     fieldsets = (
-        (None, {'fields': ('screen_id','live_user', 'is_active')}),
+        (None, {'fields': ('screen_id','live_user','password', 'is_active')}),
     )
     readonly_fields = ('created_at', 'updated_at')
 

@@ -38,7 +38,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = ['8391-2401-4900-7072-e7a5-9440-b97f-b5a-2f1c.ngrok-free.app', 'localhost', '127.0.0.1']
 # settings.py
-DOMAIN_NAME = 'http://192.168.215.224:4003'  # Replace with your actual domain
+DOMAIN_NAME = 'http://192.168.191.224:4003'  # Replace with your actual domain
 
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4003")  # Change this to your actual host
 
@@ -240,6 +240,11 @@ SESSION_COOKIE_SECURE = False
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+# or specific:
+CORS_ALLOWED_ORIGINS = [
+    "http://192.168.191.224:4003",
+]
+
 
 CORS_ALLOW_CREDENTIALS = True
 

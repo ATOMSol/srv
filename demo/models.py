@@ -1,7 +1,7 @@
 from django.db import models
 from authuser.models import CustomUser
 import uuid
-from django.contrib.auth.hashers import make_password, is_password_usable
+from django.contrib.auth.hashers import make_password
 
 
 class CallNotification(models.Model):
@@ -45,7 +45,6 @@ class Order(models.Model):
 
 
 class ScreenActivity(models.Model):
-    id=models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     screen_id = models.CharField(max_length=100,null=True,blank=True)
     live_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE,null=True,blank=True)
     password = models.CharField(max_length=500)
@@ -54,7 +53,7 @@ class ScreenActivity(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
-        # Check if password is not hashed already
-        if not is_password_usable(self.password):
+        # Check if password is not already hashed
+        if not self.password.startswith('pbkdf2_'):
             self.password = make_password(self.password)
         super().save(*args, **kwargs)

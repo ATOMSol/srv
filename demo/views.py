@@ -7,6 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
 from .serializers.call_serializers import CallNotificationSerializer,ContactListSerializer
 from .serializers.canteen_serializers import SnacksSerializer,OrderSerializer,GetOrderSerializer
+from django.contrib.auth.hashers import check_password
+from appointment.models import Appointment
+from .serializers.live_appoint_serializers import DisplayAppointmentSerializer
 
 class BaseAuthentication(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
@@ -119,25 +122,35 @@ class OrderHistoryAPIView(viewsets.ViewSet):
 
 
 class CheckUserViewSet(viewsets.ViewSet):
-    def list(self, request):
-        screen_id = request.GET.get("screen_id")  # Get screen_id from query params
-        if not screen_id:
-            return Response({"ERR": "screen_id number is required"}, status=400)
+    def create(self, request):
+        screen_id = request.data.get("screen_id")
+        password = request.data.get("password")
+
+        if not screen_id or not password:
+            return Response({"ERR": "Screen ID and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            screen_data = ScreenActivity.objects.filter(screen_id=screen_id).values()  # Fetch all related screens
+            screen_activity = ScreenActivity.objects.get(screen_id=screen_id)
 
-            return Response({
-                "RES": True,  # Convert queryset to list
-                "user": {
-                    "id":screen_data.live_user,
-                    "phone": screen_data.live_user.email,
-                    "name": screen_data.live_user.email
-                }
-            })
-        except CustomUser.DoesNotExist:
-            return Response({"ERR": "User not found"}, status=404)
+            if check_password(password, screen_activity.password):
+                screen_activity.is_active=True
+                screen_activity.save()
+                display_user = screen_activity.live_user
+                return Response({
+                    "RES": [
+                        {
+                            "screen_id":screen_activity.screen_id,
+                            "live_fetch_id": display_user.unique_id,
+                            "phone": display_user.email,  # Assuming email is used as phone
+                            "name": display_user.phone
+                        }
+                    ]
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({"ERR": "Invalid password"}, status=status.HTTP_401_UNAUTHORIZED)
 
+        except ScreenActivity.DoesNotExist:
+            return Response({"ERR": "Screen ID not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 from rest_framework.decorators import action

@@ -14,7 +14,8 @@ class AdditionalVisitorSerializer(serializers.ModelSerializer):
     def get_img(self, obj):
         if obj.img:
             return urljoin(settings.DOMAIN_NAME, obj.img.url)
-        return None
+        else:
+            return 'https://i.pinimg.com/474x/0a/a8/58/0aa8581c2cb0aa948d63ce3ddad90c81.jpg'  # yahaan aap apni default image ka URL daalein
 
 
 
@@ -32,7 +33,8 @@ class AppointmentSerializer(serializers.ModelSerializer):
         """Convert visitor_img to full URL"""
         if obj.visitor_img:
             return urljoin(settings.DOMAIN_NAME, obj.visitor_img.url)
-        return None
+        else:
+            return 'https://i.pinimg.com/474x/0a/a8/58/0aa8581c2cb0aa948d63ce3ddad90c81.jpg'  # yahaan aap apni default image ka URL daalein
     
     def get_assigned_to(self, obj):
         """Return assigned user's full name or username"""
