@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Role
+from .models import CustomUser
 from django.utils.translation import gettext_lazy as _
 
 # Register the Role model in the admin
-admin.site.register(Role)
+# admin.site.register(Role)
 
 # CustomUser Admin Configuration
 class CustomUserAdmin(UserAdmin):
@@ -14,19 +14,19 @@ class CustomUserAdmin(UserAdmin):
         (None, {'fields': ('phone', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'pass_key')}),
         (("Group"), {"fields": ("groups","user_permissions")}),
-        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'roles')}),
+        (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         (_('Team info'), {'fields': ('gm',)}),
     )
     
     # List display settings
-    list_display = ('phone','unique_id', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'date_joined')
+    list_display = ('phone','unique_id', 'first_name', 'email','get_groups', 'is_staff', 'is_active', 'date_joined')
     
     # Search fields
     search_fields = ('phone', 'first_name', 'last_name', 'email')
     
-    # Add filter for roles
-    list_filter = ('is_staff', 'is_active', 'roles')
+    # Add filter for 
+    list_filter = ('is_staff', 'is_active')
 
     # Define what fields are required for creating a user
     add_fieldsets = (
@@ -37,6 +37,13 @@ class CustomUserAdmin(UserAdmin):
 
     # Update ordering to use 'phone' instead of 'username'
     ordering = ('phone',)
+
+
+ # Custom method to display groups in list view
+    def get_groups(self, obj):
+        return ", ".join([group.name for group in obj.groups.all()])  # Return group names as a string
+    
+    get_groups.short_description = "Groups"  # Custom column name
 
 # Register the CustomUser model with the custom admin
 admin.site.register(CustomUser, CustomUserAdmin)

@@ -3,8 +3,8 @@ from django.dispatch import receiver
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from appointment.models import Appointment
-from demo.serializers.live_appoint_serializers import DisplayAppointmentSerializer
-from appointment.AppointmentSerializer import AppointmentSerializer
+from demo.serializers.live_appoint_serializers import DisplayAppointmentSerializer,AppointmentSerializer
+# from appointment.AppointmentSerializer import AppointmentSerializer
 from demo.models import CallNotification,Order
 from demo.serializers.call_serializers import CallNotificationSerializer
 from demo.serializers.canteen_serializers import GetOrderSerializer
@@ -85,7 +85,7 @@ def send_appointment_update(sender, instance, **kwargs):
     serializer = AppointmentSerializer(instance)
 
     serialized_data = serialize_data(serializer.data)  # Convert UUIDs to string
-
+    print(serialized_data)
     async_to_sync(channel_layer.group_send)(
         "appointments_updates",
         {

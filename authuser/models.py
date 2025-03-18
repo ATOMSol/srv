@@ -30,16 +30,16 @@ class CustomUserManager(BaseUserManager):
 
 
 # Role Model
-class Role(models.Model):
-    ROLE_CHOICES = [
-        ("gm", "General Manager"),
-        ("pa", "Personal Assistant"),
-        ("op", "Operator"),
-    ]
-    name = models.CharField(max_length=2, choices=ROLE_CHOICES, unique=True)
+# class Role(models.Model):
+#     ROLE_CHOICES = [
+#         ("gm", "General Manager"),
+#         ("pa", "Personal Assistant"),
+#         ("op", "Operator"),
+#     ]
+#     name = models.CharField(max_length=2, choices=ROLE_CHOICES, unique=True)
 
-    def __str__(self):
-        return self.get_name_display()  # Returns human-readable name
+#     def __str__(self):
+#         return self.get_name_display()  # Returns human-readable name
 
 
 # Custom User Model
@@ -48,14 +48,14 @@ class CustomUser(AbstractUser):
     pass_key = models.CharField(max_length=500, unique=True,blank=True,null=True)
     phone = models.CharField(max_length=15, unique=True, verbose_name=_("Phone Number"))
     
-    roles = models.ManyToManyField(Role, related_name="users")
+    # roles = models.ManyToManyField(Role, related_name="users")
     gm = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
         related_name='team_members',
-        limit_choices_to={'roles__name': 'gm'}  # Correct lookup for gm role
+        limit_choices_to={"groups__name": "GM"}  # Limit to users in GM group
     )
 
     USERNAME_FIELD = 'phone'  # Use phone as the unique identifier
@@ -65,13 +65,24 @@ class CustomUser(AbstractUser):
     # Custom manager
     objects = CustomUserManager()
 
-    def has_role(self, role_name):
-        """Check if user has a specific role"""
-        return self.roles.filter(name=role_name).exists()
+    def save(self, *args, **kwargs):
+        # Convert all char fields to uppercase except email
+        if self.phone:
+            self.phone = self.phone.upper()
+        if self.first_name:
+            self.first_name = self.first_name.upper()
+        if self.last_name:
+            self.last_name = self.last_name.upper()
+        # Email ko untouched rehne do
+        super().save(*args, **kwargs)
 
-    def get_roles(self):
-        """Return a list of role names"""
-        return list(self.roles.values_list('name', flat=True))
+    # def has_role(self, role_name):
+    #     """Check if user has a specific role"""
+    #     return self.roles.filter(name=role_name).exists()
+
+    # def get_roles(self):
+    #     """Return a list of role names"""
+    #     return list(self.roles.values_list('name', flat=True))
 
     def __str__(self):
         return str(self.unique_id)  # Convert UUID to string for readability

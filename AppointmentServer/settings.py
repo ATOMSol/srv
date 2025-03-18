@@ -39,6 +39,7 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = ['8391-2401-4900-7072-e7a5-9440-b97f-b5a-2f1c.ngrok-free.app', 'localhost', '127.0.0.1']
 # settings.py
 DOMAIN_NAME = 'http://192.168.191.224:4003'  # Replace with your actual domain
+MAIN_SERVER_DOMAIN = os.getenv("MAIN_SERVER_DOMAIN")
 
 BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4003")  # Change this to your actual host
 

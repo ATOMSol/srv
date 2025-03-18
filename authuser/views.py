@@ -14,11 +14,12 @@ class LoginAPI(viewsets.ViewSet):
             if serializer.is_valid():
                 phone = serializer.validated_data['phone']
                 password = serializer.validated_data['password']
-                role = serializer.validated_data['role']
+                role = serializer.validated_data['role'].upper()
+
 
                 user = CustomUser.objects.get(phone=phone)
-                serial = UserSerializer(user, many=False).data
-                if serial.get('role') != role:
+                # serial = UserSerializer(user, many=False).data
+                if not user.groups.filter(name=role).exists():
                     return Response({"ERR": "Role not matched"})
                 
                 user = authenticate(phone=phone, password=password)

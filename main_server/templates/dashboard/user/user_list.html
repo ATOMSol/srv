@@ -113,9 +113,9 @@
                         <td>{{ lis.email }}</td>
                         <td>{{ lis.phone }}</td>
                         <td>
-                            {% for role in lis.roles.all %}
-                                {{ role }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
+                             {% for group in lis.groups.all %}
+                             {{ group.name }}{% if not forloop.last %}, {% endif %}
+                         {% endfor %}
                         </td>
                         {% if roles == "PA" %}
                         <td>{{ lis.gm }}</td>
@@ -147,7 +147,7 @@
                                 <i class="fas fa-edit"></i>
                             </a>
                         
-                            <a class="btn btn-sm btn-danger">
+                            <a class="btn btn-sm btn-danger" href="{{ lis.unique_id }}">
                                 <i class="fas fa-trash"></i>
                             </a>
                         </td>
@@ -351,8 +351,10 @@
             }
 
             try {
+                const mainServerApi = "{{ main_server_api }}"; // Injected from Django
+
                 // API URL (Replace with your actual API endpoint)
-                const response = await fetch(`http://192.168.200.224:4000/api/connect_passkeys/?passkey=${encodeURIComponent(passkeyInput)}`, {
+                const response = await fetch(`${mainServerApi}/api/connect_passkeys/?passkey=${encodeURIComponent(passkeyInput)}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" }
                 });
@@ -398,9 +400,13 @@
             alert("OTP is required!");
             return;
         }
+
+
+        const mainServerApi = "{{ main_server_api }}"; // Injected from Django
+
     
         try {
-            const otpResponse = await fetch(`http://192.168.54.224:4000/api/connect_passkeys/`, {
+            const otpResponse = await fetch(`${mainServerApi}/api/connect_passkeys/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ passkey:passkey, unique_phone: connectionId, otp: otpInput })

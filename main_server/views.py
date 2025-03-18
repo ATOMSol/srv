@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views import View
-from authuser.models import CustomUser,Role
+from authuser.models import CustomUser
 from django.contrib.auth import authenticate
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
+import os
 
 
 
@@ -42,13 +43,13 @@ class AuthView(View):
 class LogoutView(View):
     def get(self, request):
         logout(request)  # Logs out the user
-        return redirect("main_server:index")  # Redirect to login page
+        return redirect("/")  # Redirect to login page
 
 class Dashboard(View):
     template = "dashboard/dashboard_home.html"
     def get(self,request):
-        gm_count = CustomUser.objects.filter(roles__name="gm").count()
-        pa_count = CustomUser.objects.filter(roles__name="pa").count()
+        gm_count = CustomUser.objects.filter(groups__name="GM").count()
+        pa_count = CustomUser.objects.filter(groups__name="PA").count()
         active_users = CustomUser.objects.filter(is_active=True).count()
         context = {
             "gm_count": gm_count,
@@ -63,20 +64,20 @@ class Dashboard(View):
 class UserListView(View):
     template = "dashboard/user/user_list.html"
     model_name=CustomUser
-    roles="gm"
+    # roles="gm"
     group_name="GM"
 
     def get(self, request):
         data_users=self.model_name.objects.filter(groups__name=self.group_name)
-        gm_list = self.model_name.objects.filter(roles__name='gm').distinct()
-        return render(request, self.template,{"data_users":data_users,"roles":self.group_name,"gm_list":gm_list})
+        gm_list = self.model_name.objects.filter(groups__name="GM").distinct()
+        return render(request, self.template,{"data_users":data_users,"roles":self.group_name,"gm_list":gm_list,"main_server_api": os.getenv("MAIN_SERVER_DOMAIN"),})
     
 class GmList(UserListView):...
 
 class PaList(UserListView):
     # template = "dashboard/pa/user_list.html"
     # model_name=CustomUser
-    roles="pa"
+    # roles="pa"
     group_name="PA"
 
 
@@ -86,7 +87,7 @@ class PaList(UserListView):
 class AddUserView(View):
     template = "dashboard/user/add_user.html"
     model_name=CustomUser
-    roles="gm"
+    # roles="gm"
     group_name="GM"
     def get(self, request):
         # data_users=self.model_name.objects.filter(roles__name=self.roles)
@@ -106,16 +107,16 @@ class AddUserView(View):
             user = self.model_name.objects.create(phone=request.POST.get("phone"), first_name=request.POST.get("first_name"), last_name=request.POST.get("last_name"), email=request.POST.get("email"),password=make_password(request.POST.get("password")))
            
             # Assign role
-            role_name = self.roles
-            print("role.........................",role_name)
-            role = Role.objects.get(name=role_name)
-            user.roles.add(role)
+            # role_name = self.roles
+            # print("role.........................",role_name)
+            # role = Role.objects.get(name=role_name)
+            # user.roles.add(role)
 
             # Assign GM if selected
-            if request.POST.get("gm"):
-                gm_user = self.model_name.objects.get(unique_id=request.POST.get("gm"))
-                user.gm = gm_user
-                user.save()
+            # if request.POST.get("gm"):
+            #     gm_user = self.model_name.objects.get(unique_id=request.POST.get("gm"))
+            #     user.gm = gm_user
+            #     user.save()
 
     
             group = Group.objects.get(name=self.group_name)
@@ -129,7 +130,7 @@ class GmAddUser(AddUserView):...
 class PaAddUser(AddUserView):
     # template = "dashboard/pa/user_list.html"
     # model_name=CustomUser
-    roles="pa"
+    # roles="pa"
     group_name="PA"
 
 
@@ -151,15 +152,15 @@ class UpdateUser(View):
             user.last_name = last_name
            
            
-            selected_role = request.POST.get('role')  # Get a single role name as a string
-            print("Selected role:", selected_role)  # Debugging output
+            # selected_role = request.POST.get('role')  # Get a single role name as a string
+            # print("Selected role:", selected_role)  # Debugging output
 
-            if selected_role:  # Ensure a role was selected
-                try:
-                    role_object = Role.objects.get(name=selected_role)  # Get the Role object
-                    user.roles.set([role_object])  # Update the user's role (set expects a list)
-                except Role.DoesNotExist:
-                    print("Error: Role does not exist")  # Handle missing role gracefully
+            # if selected_role:  # Ensure a role was selected
+            #     try:
+            #         role_object = Role.objects.get(name=selected_role)  # Get the Role object
+            #         user.roles.set([role_object])  # Update the user's role (set expects a list)
+            #     except Role.DoesNotExist:
+            #         print("Error: Role does not exist")  # Handle missing role gracefully
 
 
             group_change=request.POST.get('role')
@@ -177,6 +178,7 @@ class UpdateUser(View):
 
         messages.error(request, "Invalid request.")
         return redirect("main_server:dashboard_urls")
+
 
 
 

@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from authuser.models import CustomUser,Role
+from authuser.models import CustomUser
 from demo.models import CallNotification
 from rest_framework import serializers
 
@@ -8,10 +8,18 @@ class ContactListSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['unique_id', 'first_name','last_name','role']
+    # def get_role(self, obj):
+    #     role_id = obj.roles.first().id
+    #     role = Role.objects.get(id=role_id)
+    #     return role.name
+
+
     def get_role(self, obj):
-        role_id = obj.roles.first().id
-        role = Role.objects.get(id=role_id)
-        return role.name
+        """
+        Get the first group name that the user belongs to.
+        """
+        group = obj.groups.first()  # Fetch the first group assigned to the user
+        return group.name.lower() if group else None  # Return group name 
 
 # class CallNotificationSerializer(serializers.ModelSerializer):
 #     class Meta:
