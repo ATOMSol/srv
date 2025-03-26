@@ -29,19 +29,16 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
-# ALLOWED_HOSTS = [
-#     "srv-ddky.onrender.com",
-#     "127.0.0.1",
-#     "localhost",
-#     "192.168.54.224",
-# ]
 
-ALLOWED_HOSTS = ['8391-2401-4900-7072-e7a5-9440-b97f-b5a-2f1c.ngrok-free.app', 'localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['192.168.158.244', 'localhost', '127.0.0.1']
 # settings.py
-DOMAIN_NAME = 'http://192.168.191.224:4003'  # Replace with your actual domain
+# print(os.getenv('ALLOWED_HOSTS', ''))
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
+# print(ALLOWED_HOSTS)
+DOMAIN_NAME = os.getenv('ALLOWED_HOSTS')  # Replace with your actual domain
 MAIN_SERVER_DOMAIN = os.getenv("MAIN_SERVER_DOMAIN")
 
-BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:4003")  # Change this to your actual host
+BASE_URL = os.getenv("ALLOWED_HOSTS", "http://192.168.158.224:4003")  # Change this to your actual host
 
 # Application definition
 
@@ -226,28 +223,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
-
-# Add CSRF protection
-# CSRF_COOKIE_SECURE = True 
-# CSRF_TRUSTED_ORIGINS = [
-#     '*',
-# ]
-
-# CORS_ALLOWED_ORIGINS = [
-#     '*',
-# ]
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = False
 
 
-CORS_ALLOW_ALL_ORIGINS = True
-# or specific:
-CORS_ALLOWED_ORIGINS = [
-    "http://192.168.191.224:4003",
-]
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
 
 
-CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ALLOW_CREDENTIALS = True
 
 ADMIN_SITE_HEADER = 'Appointment Server Admin'
 ADMIN_SITE_TITLE = 'Appointment Server'

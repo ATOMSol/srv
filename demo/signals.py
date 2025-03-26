@@ -8,6 +8,7 @@ from demo.serializers.live_appoint_serializers import DisplayAppointmentSerializ
 from demo.models import CallNotification,Order
 from demo.serializers.call_serializers import CallNotificationSerializer
 from demo.serializers.canteen_serializers import GetOrderSerializer
+from django.utils.timezone import now
 
 
 
@@ -62,7 +63,7 @@ def order_notify(sender, instance, **kwargs):
     channel_layer = get_channel_layer()
     
     # Check if the instance is today's and has status 'pending'
-    if instance.status == False:
+    if instance.status == False and instance.created_at.date() == now().date():
         # Serialize the filtered instance
         serialized_data = GetOrderSerializer(instance).data
 

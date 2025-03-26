@@ -1,7 +1,7 @@
 from .settings import *  # Import production settings and override for development
 
 DEBUG = True
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 DATABASES = {
     "default": {
@@ -11,17 +11,17 @@ DATABASES = {
 }
 
 # ✅ Fix CSRF & CORS
-CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:4003",
-    "http://localhost:4003",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://127.0.0.1:4003",
+#     "http://localhost:4003",
+# ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:4003",
-    "http://localhost:4003",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:4003",
+#     "http://localhost:4003",
+# ]
 
-CORS_ALLOW_CREDENTIALS = True  # Required for authentication
+# CORS_ALLOW_CREDENTIALS = True  # Required for authentication
 
 
 # Use local Redis if in debug mode

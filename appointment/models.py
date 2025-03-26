@@ -6,10 +6,11 @@ import uuid
 
 STATUS_CHOICES = (
         ('pending','pending'),
-        ('in_progress', 'In Progress'),
+        ('progress', 'In Progress'),
         ('completed','Completed'),
-        ('next','Next'),
         ('call','Call'),
+        ('cancel','Cancel'),
+
 )
 class Appointment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

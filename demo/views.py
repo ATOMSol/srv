@@ -10,6 +10,7 @@ from .serializers.canteen_serializers import SnacksSerializer,OrderSerializer,Ge
 from django.contrib.auth.hashers import check_password
 from appointment.models import Appointment
 from .serializers.live_appoint_serializers import DisplayAppointmentSerializer
+from django.utils.timezone import localtime
 
 class BaseAuthentication(viewsets.ViewSet):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
@@ -116,7 +117,7 @@ class OrderCreateAPIView(BaseAuthentication):
 
 class OrderHistoryAPIView(viewsets.ViewSet):
     def list(self, request):
-        serial=GetOrderSerializer(Order.objects.all(), many=True)
+        serial=GetOrderSerializer(Order.objects.filter(created_at__date= localtime().date()), many=True)
         return Response({"RES":serial.data})
 
 

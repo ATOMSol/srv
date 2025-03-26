@@ -24,6 +24,8 @@ class AppointmentCreateView(BaseAuthentication):
     parser_classes = [MultiPartParser, FormParser]
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
+        print(request.POST)
         try:
             data = request.data.copy()
             files = request.FILES
@@ -176,13 +178,11 @@ class AppointmentUpdateView(BaseAuthentication):
     def create(self, request):
         visitor_id = request.data.get('visitor_id')
         new_description = request.data.get('remark')
-        vis_status = request.data.get('status')
         if not visitor_id:
             return Response({'error': 'visitor_id and remark are required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
             visitor_description = Appointment.objects.get(id=visitor_id)
             visitor_description.description = new_description
-            visitor_description.status = vis_status
             visitor_description.save()
             return Response({'success': 'Remark updated successfully'}, status=status.HTTP_200_OK)
 

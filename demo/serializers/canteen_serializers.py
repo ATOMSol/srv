@@ -41,6 +41,8 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ["phone","first_name","last_name"]  # Add other fields if needed
 
+from django.utils.timezone import localtime
+
 class GetOrderSerializer(serializers.ModelSerializer):
     """Serializer for Order, including user details."""
     created_by = UserSerializer(read_only=True)
@@ -48,4 +50,16 @@ class GetOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "items", "status", "created_by", "updated_by", "created_at", "updated_at"]
+        fields = '__all__'
+
+        def to_representation(self, instance):
+                data = super().to_representation(instance)
+
+                # ✅ Timezone conversion to Asia/Kolkata
+                indian_tz = pytz.timezone("Asia/Kolkata")
+                if instance.created_at:
+                    data["created_at"] = localtime(instance.created_at).strftime("%Y-%m-%d %H:%M:%S")
+                if instance.updated_at:
+                    data["updated_at"] = localtime(instance.updated_at).strftime("%Y-%m-%d %H:%M:%S")
+
+                return data

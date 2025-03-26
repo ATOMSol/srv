@@ -14,7 +14,7 @@ class OrderLiveConsumer(AsyncWebsocketConsumer):
     async def order_notify(self, event):
         """Handle order_notify message type."""
         data = event['data']
-        print("sad",data)
+        # print("sad",data)
 
         # Send JSON response
         await self.send(text_data=json.dumps({

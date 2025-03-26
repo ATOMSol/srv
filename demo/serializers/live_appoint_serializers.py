@@ -11,7 +11,7 @@ class DisplayAppointmentSerializer(serializers.ModelSerializer):
     assigned_to = serializers.CharField(source='assigned_to_id', allow_null=True)  # FK ID as string, nullable
     created_by = serializers.CharField(source='created_by_id', allow_null=True)  # FK ID as string, nullable
     gm_name = serializers.SerializerMethodField()  # ✅ To get assigned GM name
-    company_display_name = serializers.SerializerMethodField()  # ✅ Custom field for company or visitor name
+    # company_display_name = serializers.SerializerMethodField()  # ✅ Custom field for company or visitor name
 
     class Meta:
         model = Appointment
@@ -19,21 +19,23 @@ class DisplayAppointmentSerializer(serializers.ModelSerializer):
             'id', 
             'assigned_to', 
             'gm_name', 
-            'created_by', 
+            'company_name',
+            'visitor_name',
             'status',
-            'company_display_name'  # ✅ Make sure this field is included here
+            'created_by', 
+            'created_at'
         ]
 
     def get_gm_name(self, obj):
         return obj.assigned_to.first_name if obj.assigned_to else None
 
-    def get_company_display_name(self, obj):
-        """
-        Return company name if valid, else visitor name.
-        """
-        if obj.company_name and obj.company_name != "NA":
-            return obj.company_name
-        return obj.visitor_name
+    # def get_company_display_name(self, obj):
+    #     """
+    #     Return company name if valid, else visitor name.
+    #     """
+    #     if obj.company_name and obj.company_name != "NA":
+    #         return obj.company_name
+    #     return obj.visitor_name
 
 
 
