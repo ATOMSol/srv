@@ -30,10 +30,10 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 
-# ALLOWED_HOSTS = ['192.168.2.244', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['192.168.29.209', 'localhost', '127.0.0.1']
 # settings.py
 # print(os.getenv('ALLOWED_HOSTS', ''))
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
+# ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
 # print(ALLOWED_HOSTS)
 DOMAIN_NAME = os.getenv('ALLOWED_HOSTS')  # Replace with your actual domain
 MAIN_SERVER_DOMAIN = os.getenv("MAIN_SERVER_DOMAIN")
@@ -132,7 +132,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.getenv("REDIS_URL", "redis://home_redis:6379/0")],
+            "hosts": [os.getenv("REDIS_URL", "redis://anurag_redis:6379/0")],
         },
     },
 }
