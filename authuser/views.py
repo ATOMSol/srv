@@ -10,26 +10,25 @@ from rest_framework import status
 
 class LoginAPI(viewsets.ViewSet):
     def create(self, request):
-        print(request.data)
         try:
             serializer = LoginSerializer(data=request.data)
             if serializer.is_valid():
+
                 phone = serializer.validated_data['phone']
                 password = serializer.validated_data['password']
                 role = serializer.validated_data['role'].upper()
 
 
                 user = CustomUser.objects.get(phone=phone)
+
                 # serial = UserSerializer(user, many=False).data
                 if not user.groups.filter(name=role).exists():
                     return Response({"ERR": "Role not matched"})
-                
                 user = authenticate(phone=phone, password=password)
                 if user is not None:
                     if Token.objects.filter(user=user).exists():
                         Token.objects.get(user=user).delete()
                     token = Token.objects.create(user=user)
-                    print(token)
 
                     return Response({
                         'user': UserSerializer(user, many=False).data,
@@ -63,7 +62,7 @@ def index(request):
 
 class DisplayLoginAPI(viewsets.ViewSet):
     def create(self, request):
-        print(request.data)
+        # print(request.data)
         try:
             # serializer = LoginSerializer(data=request.data)
             # if serializer.is_valid():

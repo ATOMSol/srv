@@ -86,7 +86,7 @@ def send_appointment_update(sender, instance, **kwargs):
     serializer = AppointmentSerializer(instance)
 
     serialized_data = serialize_data(serializer.data)  # Convert UUIDs to string
-    print(serialized_data)
+    # print(serialized_data)
     async_to_sync(channel_layer.group_send)(
         "appointments_updates",
         {

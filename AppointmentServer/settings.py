@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 
-# ALLOWED_HOSTS = ['192.168.158.244', 'localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ['192.168.2.244', 'localhost', '127.0.0.1']
 # settings.py
 # print(os.getenv('ALLOWED_HOSTS', ''))
 ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
@@ -250,4 +250,9 @@ EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
+# EMAIL_HOST='smtp.gmail.com'
+# EMAIL_PORT=587
+# EMAIL_HOST_USER='mastikipathshala828109@gmail.com'
+# EMAIL_HOST_PASSWORD='tjoksyydygkrfyxf'
+# EMAIL_USE_TLS=True
 

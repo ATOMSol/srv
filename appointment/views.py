@@ -8,6 +8,11 @@ from rest_framework.authentication import TokenAuthentication,SessionAuthenticat
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.db import transaction  #  Import this at top
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
+
 
 class BaseAuthentication(viewsets.ViewSet):
     # def list(self, request):
@@ -24,8 +29,7 @@ class AppointmentCreateView(BaseAuthentication):
     parser_classes = [MultiPartParser, FormParser]
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        print(request.POST)
+
         try:
             data = request.data.copy()
             files = request.FILES
@@ -70,73 +74,22 @@ class AppointmentCreateView(BaseAuthentication):
                 if additional_visitors_list:
                     AdditionalVisitor.objects.bulk_create(additional_visitors_list)
 
-                print(" Appointment & Visitors Saved Successfully!")
-
+                print(" Appointment & Visitors Saved Successfully!",additional_visitors_list)
+            mail(appointment_data.visitor_name,appointment_data.email,appointment_data.date,f"{request.user.gm.first_name} {request.user.gm.last_name}",additional_visitors_list,"Appointment Confirmation","message")
             #  Return success response if everything went fine
             return Response({"message": "Appointment and Additional Visitors created successfully."}, status=status.HTTP_201_CREATED)
 
         except Exception as e:
             print(" Error Occurred:", e)
             return Response({"message": "Appointment Not created successfully."}, status=status.HTTP_400_BAD_REQUEST)
-
-# http://127.0.0.1:8000/api/appointments/create-appointment/
-# class AppointmentCreateView(viewsets.ModelViewSet):
-#     parser_classes = [MultiPartParser, FormParser]
-
-#     def create(self, request, *args, **kwargs):
-#         data = request.data.copy()
-#         files = request.FILES
-
-#         # Extracting Additional Visitors
-#         additional_visitors = []
-#         index = 0
-#         while f"additional_visitor[{index}][name]" in data:
-#             additional_visitors.append({
-#                 "name": data[f"additional_visitor[{index}][name]"],
-#                 "img": files.get(f"additional_visitor[{index}][img]")  # Handle file uploads
-#             })
-#             index += 1
-
-#         # Prepare main appointment data
-#         appointment_data = {
-#             "visitor_name": data.get("visitor_name"),
-#             "purpose_of_visit": data.get("purpose_of_visit"),
-#             "email": data.get("email"),
-#             "phone": data.get("phone"),
-#             "company_name": data.get("company_name") or "",
-#             "company_address": data.get("company_address") or "kl",
-#             "date": data.get("date"),
-#             "visitor_img": files.get("visitor_img"),
-#             # "created_by": request.user,  #  FIX: Pass UUID instead of user object
-#             "additional_visitors": additional_visitors
-#         }
         
-#         print("🔹 Appointment Data:", appointment_data)  # Debugging
 
-#         # Serialize and save
-#         serializer = AppointmentSerializer(data=appointment_data)
-#         if serializer.is_valid():
-#             appointment = serializer.save()  #  Save main appointment
-            
-#             #  Save additional visitors separately
-#             for visitor_data in additional_visitors:
-#                 visitor_data["participants"] = appointment.id  # Link to the appointment
-#                 visitor_serializer = AdditionalVisitorSerializer(data=visitor_data)
-#                 if visitor_serializer.is_valid():
-#                     visitor_serializer.save()
-#                 # Process additional visitors after saving
-#                 else:
-#                     print(" Additional Visitor Error:", visitor_serializer.errors)
-#  #  Ek hi email me sabhi ID Cards send karein
-#             # send_combined_id_card_email(appointment)
-
-#             return Response(serializer.data, status=status.HTTP_20_CREATED)
-        
-#         print(" Serializer Errors:", serializer.errors)  # Debugging
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
+# {'id': '6f340447-cedd-49f5-9fc3-550124b0be2b', 
+#  'visitor_img': 'https://i.pinimg.com/474x/0a/a8/58/0aa8581c2cb0aa948d63ce3ddad90c81.jpg', 
+#  'additional_visitors': [], 'visitor_name': 'K', 'email': 'k@fk.in', 'phone': '7481253621',
+#    'date': '2025-03-29', 'description': '', 'status': 'pending', 'company_name': 'G', 'company_address': 'KK',
+#      'purpose_of_visit': 'K', 'created_at': '2025-03-29T04:14:55.906687+05:30', 'updated_at': '2025-03-29T04:14:55.906687+05:30', 
+#      'assigned_to': '3ac08101-993f-4b58-8baf-7d07b4a964d6', 'created_by': 'bf922f51-1a4f-441d-9510-3e5b021f7fbc', 'updated_by': None}
 
 
 # http://127.0.0.1:8000/api/appointments/get-appointments/?status=PENDING&client=j
@@ -151,7 +104,7 @@ class AppointmentListView(BaseAuthentication):
     def get_queryset(self):
         query_params = self.request.GET.dict()
         queryset = Appointment.objects.prefetch_related("additional_visitors").all()  #  Fix here!
-        print(queryset)
+        # print(queryset)
         for field, value in query_params.items():
             if hasattr(Appointment, field):
                 queryset = queryset.filter(**{field: value})
@@ -162,11 +115,11 @@ class AppointmentListView(BaseAuthentication):
         return self.serializer_class(*args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        print("jj",request.data,request.GET)
+        # print("jj",request.data,request.GET)
         queryset = self.get_queryset()
         # print(queryset)
         serializer = self.get_serializer(queryset, many=True)
-        print(serializer.data)
+        # print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 
@@ -213,7 +166,7 @@ class CallVisitorView(BaseAuthentication):
     def list(self, request):
         visitor_id = request.query_params.get('visitor_id')  # Extract from query
         action = request.query_params.get('action')  # Extract action
-        print(visitor_id,action)
+        # print(visitor_id,action)
         if not visitor_id or not action:
             return Response({'error': 'visitor_id and call field are required'}, status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -234,36 +187,42 @@ class CallVisitorView(BaseAuthentication):
 
 
 
-# from django.template.loader import render_to_string
-# from weasyprint import HTML
-# from django.core.mail import EmailMessage
-# from io import BytesIO
 
-# def generate_id_card_pdf(visitor, request):
-#     """Bootstrap ke sath ID Card PDF banayein (Using WeasyPrint)"""
-#     visitor.img_url = request.build_absolute_uri(visitor.img.url) if visitor.img else None
+def mail(visitor_name,client_email,date,gm,additional_visitors,subject,message):
+    print("ad",additional_visitors)
+    try:
+        from_email = "mastikipathshala828109@gmail.com"
+        
+        # Correct template_path and render the HTML template with the provided data
+        template_path = 'mail_templates/appointment-confirmation-email.html'
+        context = {
+            'visitor_name': visitor_name,
+            'message':message,
+            'client_email':client_email,
+            'date':date,
+            'gm':gm,
+            'additional_visitors':additional_visitors,
+        }
+        
+        # Render the HTML template to a string
+        message = render_to_string(template_path, context)
+        
+        to = client_email
+        
+        # Create an email message object and attach the HTML message
+        msg = EmailMultiAlternatives(subject, '', from_email, [to])
+        msg.attach_alternative(message, 'text/html')
+        try:
+            print("Sdfsd")
+            msg.send()
+        except Exception as e:
+            print("Error sending email:", e)
+            raise Exception("Problem sending email check password")
+        
+    except Exception as e:
+        print("Error sending email:", e)
+        raise Exception("Problem sending email")
 
-#     html_string = render_to_string("id_card_template.html", {"visitor": visitor})
-#     pdf_io = BytesIO()
-    
-#     #  Convert HTML to PDF using WeasyPrint
-#     HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf(pdf_io)
-    
-#     pdf_io.seek(0)
-#     return pdf_io
 
-# def send_combined_id_card_email(appointment, request):
-#     """Sirf Additional Visitors ke ID Cards ek hi email me PDF attach karke bhejo"""
-#     email_msg = EmailMessage(
-#         subject="Your Visitor ID Cards",
-#         body=f"Dear {appointment.visitor_name},\n\nHere are the ID cards for all additional visitors.",
-#         to=[appointment.email],  #  Ek hi email pe bhejna
-#     )
 
-#     #  Additional visitors ke ID cards attach karein
-#     for visitor in appointment.additional_visitors.all():
-#         pdf = generate_id_card_pdf(visitor, request)  # WeasyPrint PDF generate karega
-#         if pdf:
-#             email_msg.attach(f"{visitor.name}_ID.pdf", pdf.getvalue(), "application/pdf")
-
-#     email_msg.send()
+# def AppointmentCreateMail(self,request):

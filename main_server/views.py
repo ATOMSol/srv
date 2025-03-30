@@ -190,7 +190,6 @@ from authuser.models import CustomUser
 class Passkey(View):
     def post(self, request):
         try:
-            print(request.POST)
             unique_id = request.POST.get("unique_id")  # Get user ID from JSON request
             pass_key = request.POST.get("pass_key")  # Get passkey
 

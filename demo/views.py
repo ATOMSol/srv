@@ -56,10 +56,9 @@ class CallGenerate(BaseAuthentication):
 class ContactList(BaseAuthentication):
     def list(self, request):
         try:
-            print(6666)
-            data=CustomUser.objects.filter(gm=request.user)
+            # print(request.GET.get("gm_id"))
+            data=CustomUser.objects.filter(gm=request.GET.get("gm_id"))
             serial=ContactListSerializer(data,many=True)
-            print(serial.data)
             return Response({'RES':serial.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'message': 'Failed to log out'}, status=status.HTTP_400_BAD_REQUEST)
@@ -67,10 +66,8 @@ class ContactList(BaseAuthentication):
 
 class AcceptCall(BaseAuthentication):
     def create(self, request):
-        print(request.data)
         if not request.data.get('call_id'):
             return Response({'ERR': 'Call id required'}, status=status.HTTP_400_BAD_REQUEST)
-        print(request.data)
 
         try:
             call_notification = CallNotification.objects.get(call_id=request.data.get('call_id'))
@@ -184,7 +181,7 @@ class ActiveDisplay(BaseAuthentication):
 
 class DeActiveDisplay(BaseAuthentication):
     def create(self, request):
-        print(request.data)
+        # print(request.data)
         try:
             ob = ScreenActivity.objects.get(id=request.data.get("id"))  # ✅ id
             ob.is_active = False

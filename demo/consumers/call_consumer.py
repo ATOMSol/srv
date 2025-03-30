@@ -11,7 +11,6 @@ class CallLiveConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
         await self.channel_layer.group_add('call_live', self.channel_name)
-        print("go")
         logger.info(f"✅ WebSocket {self.channel_name} connected and added to group.")
 
     async def disconnect(self, close_code):
@@ -22,14 +21,11 @@ class CallLiveConsumer(AsyncWebsocketConsumer):
     async def call_notify(self, event):
         """Handle call_notify message type."""
         data = event['data']
-        print(data)
         logger.info(f"📞 Call Notification Sent: {data}")
 
         # Convert UUID objects to strings (Avoid JSON errors)
         data['sender'] = str(data['sender'])
         data['receiver'] = str(data['receiver'])
-        print(data['receiver'])
-        print("k",self.receive_id)
         if data['receiver']!=self.receive_id:
             return
 
