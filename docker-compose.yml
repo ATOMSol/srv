@@ -64,3 +64,12 @@ volumes:
   home_redis_data:
   static_vmsh:
   db_backup:
+
+
+  # volumes:
+  # home_postgres_data:
+  #   external: true
+  # home_redis_data:
+  #   external: true
+  # static_vmsh:
+  # db_backup:  # <--- Add this line if it's a volume

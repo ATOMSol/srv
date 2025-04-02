@@ -30,11 +30,11 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "fallback_secret")
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 
 
-ALLOWED_HOSTS = ['192.168.29.209', 'localhost', '127.0.0.1']
-# settings.py
-# print(os.getenv('ALLOWED_HOSTS', ''))
-# ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
-# print(ALLOWED_HOSTS)
+# ALLOWED_HOSTS = ['192.168.146.224', 'localhost', '127.0.0.1']
+# ALLOWED_HOSTS = ["*"]
+
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOSTS', '').replace('https://', '')]
+# print("jj",os.getenv('ALLOWED_HOSTS', '').replace('https://', ''))
 DOMAIN_NAME = os.getenv('ALLOWED_HOSTS')  # Replace with your actual domain
 MAIN_SERVER_DOMAIN = os.getenv("MAIN_SERVER_DOMAIN")
 
@@ -59,13 +59,24 @@ INSTALLED_APPS = [
 
 ]
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'your_db_name'),
+        'USER': os.getenv('POSTGRES_USER', 'your_db_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'your_db_password'),
+        'HOST': os.getenv('DB_HOST', 'db'),  # "db" Docker Compose service ka naam hai
+        'PORT': os.getenv('DB_PORT', '5432'),  # PostgreSQL ka default port
     }
 }
-
 
 # DATABASES = {
 #     'default': dj_database_url.config(default=os.getenv("DATABASE_URL", "postgresql://user:pass@db:5432/dbname"))
@@ -87,7 +98,6 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
